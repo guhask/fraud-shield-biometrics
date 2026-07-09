@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Behavioral Biometric Fraud Shield — IDBI Innovate 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E1424; --panel:#161D33; --panel-alt:#1B2340; --panel-line:#2A3355;
+  --text-pri:#EEF1F6; --text-mut:#8B93A7; --text-faint:#5C6280;
+  --brass:#C9A15E; --brass-dim:#8C744A;
+  --green:#4FAE7C; --green-bg:#16261F;
+  --amber:#E0A63C; --amber-bg:#2A2216;
+  --rose:#D9645A; --rose-bg:#2A1918;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{ background:var(--ink); color:var(--text-pri); font-family:'Inter',sans-serif; min-height:100vh; padding:28px; }
+.wrap{max-width:1180px; margin:0 auto;}
+.topbar{ display:flex; justify-content:space-between; align-items:flex-end; padding-bottom:20px; margin-bottom:26px; border-bottom:1px solid var(--panel-line); }
+.brand-eyebrow{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; color:var(--brass); text-transform:uppercase; margin-bottom:6px; }
+.brand-title{ font-family:'Fraunces',serif; font-weight:500; font-size:25px; }
+.brand-sub{ font-size:13px; color:var(--text-mut); margin-top:4px; max-width:560px; }
+.topbar-right{ text-align:right; font-size:12px; color:var(--text-faint); font-family:'IBM Plex Mono',monospace; }
+
+.steps{ display:flex; gap:10px; margin-bottom:22px; }
+.step-pill{ font-family:'IBM Plex Mono',monospace; font-size:11px; padding:6px 14px; border-radius:20px; border:1px solid var(--panel-line); color:var(--text-faint); }
+.step-pill.active{ border-color:var(--brass); color:var(--brass); }
+.step-pill.done{ border-color:var(--green); color:var(--green); }
+
+.grid{ display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-bottom:22px; }
+@media (max-width:860px){ .grid{ grid-template-columns:1fr; } }
+
+.card{ background:var(--panel); border:1px solid var(--panel-line); border-radius:14px; padding:26px; position:relative; overflow:hidden; }
+.card::before{ content:""; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, var(--brass-dim), var(--brass), var(--brass-dim)); }
+.card-title{ font-family:'Fraunces',serif; font-size:18px; font-weight:500; margin-bottom:6px; }
+.card-sub{ font-size:12.5px; color:var(--text-mut); margin-bottom:18px; line-height:1.5; }
+
+.phrase-input{
+  width:100%; padding:14px 16px; font-family:'IBM Plex Mono',monospace; font-size:16px;
+  background:var(--panel-alt); border:1px solid var(--panel-line); border-radius:8px; color:var(--text-pri);
+  letter-spacing:.05em; outline:none;
+}
+.phrase-input:focus{ border-color:var(--brass); }
+.phrase-input:disabled{ opacity:.4; }
+.phrase-target{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-faint); margin-top:8px; }
+.phrase-target b{ color:var(--brass); font-weight:500; }
+
+.btn{
+  margin-top:14px; padding:10px 20px; border-radius:8px; border:1px solid var(--brass);
+  background:transparent; color:var(--brass); font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+  cursor:pointer; transition:all .15s;
+}
+.btn:hover{ background:var(--brass); color:var(--ink); }
+.btn:disabled{ opacity:.35; cursor:not-allowed; border-color:var(--text-faint); color:var(--text-faint); }
+.btn:disabled:hover{ background:transparent; color:var(--text-faint); }
+.btn-ghost{ border-color:var(--panel-line); color:var(--text-mut); margin-left:10px; }
+.btn-ghost:hover{ background:var(--panel-alt); color:var(--text-pri); }
+
+.progress-dots{ display:flex; gap:8px; margin-top:16px; }
+.dot{ width:34px; height:6px; border-radius:3px; background:var(--panel-alt); }
+.dot.filled{ background:var(--brass); }
+
+.error-msg{ font-size:12px; color:var(--rose); margin-top:10px; min-height:16px; }
+
+.baseline-stats{ margin-top:18px; padding-top:16px; border-top:1px solid var(--panel-line); display:none; }
+.baseline-stats.show{ display:block; }
+.stat-row{ display:flex; justify-content:space-between; font-size:12.5px; padding:5px 0; color:var(--text-mut); }
+.stat-row b{ color:var(--text-pri); font-family:'IBM Plex Mono',monospace; font-weight:500; }
+
+.result-wrap{ display:none; margin-top:20px; padding-top:20px; border-top:1px solid var(--panel-line); }
+.result-wrap.show{ display:block; }
+.result-top{ display:flex; gap:20px; align-items:center; }
+.dial-score{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint); text-align:center; margin-top:4px; }
+.decision-block{ flex:1; }
+.decision-label{ font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; padding:6px 14px; border-radius:18px; display:inline-block; }
+.decision-Authenticated{ background:var(--green-bg); color:var(--green); border:1px solid var(--green); }
+.decision-Step-up{ background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber); }
+.decision-Blocked{ background:var(--rose-bg); color:var(--rose); border:1px solid var(--rose); }
+.decision-sub{ font-size:12px; color:var(--text-mut); margin-top:8px; line-height:1.5; }
+
+.explain-list{ margin-top:16px; }
+.explain-item{ font-size:12px; color:var(--text-mut); padding:5px 0; display:flex; gap:8px; }
+.explain-item .tag{ font-family:'IBM Plex Mono',monospace; font-size:10px; padding:1px 7px; border-radius:4px; height:fit-content; }
+.tag-good{ background:var(--green-bg); color:var(--green); }
+.tag-warn{ background:var(--amber-bg); color:var(--amber); }
+.tag-bad{ background:var(--rose-bg); color:var(--rose); }
+
+.log-card{ background:var(--panel); border:1px solid var(--panel-line); border-radius:14px; padding:24px; }
+.log-title{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em; color:var(--text-faint); text-transform:uppercase; margin-bottom:14px; }
+table{ width:100%; border-collapse:collapse; }
+th{ text-align:left; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.05em; padding:8px 10px; border-bottom:1px solid var(--panel-line); }
+td{ font-size:12.5px; padding:10px 10px; border-bottom:1px solid var(--panel-line); color:var(--text-pri); }
+.badge{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; padding:3px 10px; border-radius:12px; }
+.empty-log{ font-size:12.5px; color:var(--text-faint); padding:16px 0; text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <div class="brand-eyebrow">IDBI Innovate 2026 · Track 05 · Wildcard Open Innovation</div>
+      <div class="brand-title">Behavioral Biometric Fraud Shield</div>
+      <div class="brand-sub">Authenticates by <i>how</i> you type, not just what you type — catching account takeover before a transaction ever happens.</div>
+    </div>
+    <div class="topbar-right">Team Pulse Capital Labs<br>Live keystroke capture — no simulated data</div>
+  </div>
+
+  <div class="steps">
+    <div class="step-pill active" id="step1pill">1 · Enroll typing rhythm</div>
+    <div class="step-pill" id="step2pill">2 · Verify a session</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Step 1 — Build your rhythm baseline</div>
+      <div class="card-sub">Type the phrase below naturally, 3 times. We capture keystroke <b>dwell time</b> (how long each key is held) and <b>flight time</b> (the gap between keystrokes) to build your typing fingerprint.</div>
+      <input type="text" class="phrase-input" id="enrollInput" placeholder="Type the passphrase here..." autocomplete="off">
+      <div class="phrase-target">Passphrase: <b>SecurePulse2026</b></div>
+      <div class="progress-dots" id="enrollDots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="error-msg" id="enrollError"></div>
+      <button class="btn" id="enrollBtn" onclick="submitEnroll()">Submit sample</button>
+      <button class="btn btn-ghost" onclick="resetAll()">Reset demo</button>
+      <div class="baseline-stats" id="baselineStats">
+        <div class="stat-row"><span>Avg dwell time</span><b id="statDwell">—</b></div>
+        <div class="stat-row"><span>Avg flight time</span><b id="statFlight">—</b></div>
+        <div class="stat-row"><span>Avg total typing time</span><b id="statTotal">—</b></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Step 2 — Verify a session</div>
+      <div class="card-sub">Now type the same passphrase again. Try it naturally first — then try again typing much faster, slower, or hunting for keys, to see the Trust Score react.</div>
+      <input type="text" class="phrase-input" id="verifyInput" placeholder="Complete Step 1 first..." autocomplete="off" disabled>
+      <div class="phrase-target">Passphrase: <b>SecurePulse2026</b></div>
+      <div class="error-msg" id="verifyError"></div>
+      <button class="btn" id="verifyBtn" onclick="submitVerify()" disabled>Check this session</button>
+
+      <div class="result-wrap" id="resultWrap">
+        <div class="result-top">
+          <div>
+            <svg width="120" height="120" viewBox="0 0 120 120" id="dialSvg"></svg>
+            <div class="dial-score">TRUST SCORE</div>
+          </div>
+          <div class="decision-block">
+            <div class="decision-label" id="decisionLabel">—</div>
+            <div class="decision-sub" id="decisionSub"></div>
+          </div>
+        </div>
+        <div class="explain-list" id="explainList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="log-card">
+    <div class="log-title">Session log</div>
+    <table id="logTable" style="display:none;">
+      <thead><tr><th>Time</th><th>Trust score</th><th>Decision</th><th>Notes</th></tr></thead>
+      <tbody id="logBody"></tbody>
+    </table>
+    <div class="empty-log" id="emptyLog">No verification attempts yet — complete Step 1, then Step 2.</div>
+  </div>
+</div>
+
+<script>
+const PHRASE = "SecurePulse2026";
+let enrollSamples = [];
+let baseline = null; // {dwellMean[], dwellStd[], flightMean[], flightStd[], totalMean}
+let capturing = { downTimes: {}, events: [] };
+
+function attachCapture(input) {
+  let events = [];
+  let downQueues = {};
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace') {
+      // deleting a character removes its captured keystroke too, keeping events in sync with the text
+      if (events.length > 0) events.pop();
+      return;
+    }
+    if (e.key.length !== 1) return;
+    if (!downQueues[e.key]) downQueues[e.key] = [];
+    downQueues[e.key].push(performance.now());
+  });
+  input.addEventListener('keyup', (e) => {
+    if (e.key.length !== 1) return;
+    const q = downQueues[e.key];
+    if (q && q.length) {
+      const down = q.shift();
+      events.push({ key: e.key, down: down, up: performance.now() });
+    }
+  });
+  input.addEventListener('focus', () => {
+    events.length = 0;
+    downQueues = {};
+  });
+  return events;
+}
+
+const enrollInput = document.getElementById('enrollInput');
+const verifyInput = document.getElementById('verifyInput');
+let enrollEvents = attachCapture(enrollInput);
+let verifyEvents = attachCapture(verifyInput);
+
+function extractFeatures(events, text) {
+  const clean = events.filter(e => e.key !== 'Backspace');
+  // Require most keystrokes to be captured, but tolerate a small shortfall
+  // (e.g. from autofill/predictive text inserting a character without a discrete key event)
+  // rather than hard-failing the whole attempt.
+  if (clean.length < Math.ceil(text.length * 0.7)) {
+    return { error: true, captured: clean.length, expected: text.length };
+  }
+  const n = Math.min(clean.length, text.length);
+  const dwell = clean.slice(0, n).map(e => e.up - e.down);
+  const flight = [];
+  for (let i = 1; i < n; i++) {
+    flight.push(clean[i].down - clean[i - 1].up);
+  }
+  const total = clean[n - 1].up - clean[0].down;
+  return { dwell, flight, total, captured: clean.length, expected: text.length };
+}
+
+function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
+function std(arr) { const m = mean(arr); return Math.sqrt(mean(arr.map(x => (x - m) ** 2))); }
+
+function submitEnroll() {
+  const val = enrollInput.value;
+  const errEl = document.getElementById('enrollError');
+  if (val !== PHRASE) {
+    errEl.textContent = "Text doesn't match the passphrase exactly — please retype it.";
+    enrollInput.value = ''; enrollEvents.length = 0;
+    return;
+  }
+  const feats = extractFeatures(enrollEvents, PHRASE);
+  if (feats.error) {
+    errEl.textContent = `Capture glitch — captured ${feats.captured}/${feats.expected} keystrokes (browser autofill/predictive text may be interfering). Please retype it, ideally with autofill disabled.`;
+    enrollInput.value = ''; enrollEvents.length = 0;
+    return;
+  }
+  errEl.textContent = '';
+  enrollSamples.push(feats);
+  const dots = document.querySelectorAll('#enrollDots .dot');
+  dots[enrollSamples.length - 1].classList.add('filled');
+  enrollInput.value = ''; enrollEvents.length = 0;
+
+  if (enrollSamples.length >= 3) {
+    buildBaseline();
+  }
+}
+
+function buildBaseline() {
+  // align across samples using the shortest capture (handles minor per-attempt capture variance)
+  const nDwell = Math.min(...enrollSamples.map(s => s.dwell.length));
+  const nFlight = Math.min(...enrollSamples.map(s => s.flight.length));
+  const dwellMean = [], dwellStd = [], flightMean = [], flightStd = [];
+  for (let i = 0; i < nDwell; i++) {
+    const vals = enrollSamples.map(s => s.dwell[i]);
+    dwellMean.push(mean(vals));
+    dwellStd.push(Math.max(std(vals), 6));
+  }
+  for (let i = 0; i < nFlight; i++) {
+    const vals = enrollSamples.map(s => s.flight[i]);
+    flightMean.push(mean(vals));
+    flightStd.push(Math.max(std(vals), 6));
+  }
+  const totalMean = mean(enrollSamples.map(s => s.total));
+  baseline = { dwellMean, dwellStd, flightMean, flightStd, totalMean };
+
+  document.getElementById('statDwell').textContent = Math.round(mean(dwellMean)) + ' ms';
+  document.getElementById('statFlight').textContent = Math.round(mean(flightMean)) + ' ms';
+  document.getElementById('statTotal').textContent = Math.round(totalMean) + ' ms';
+  document.getElementById('baselineStats').classList.add('show');
+
+  document.getElementById('enrollBtn').disabled = true;
+  enrollInput.disabled = true;
+  document.getElementById('step1pill').classList.remove('active');
+  document.getElementById('step1pill').classList.add('done');
+  document.getElementById('step2pill').classList.add('active');
+
+  verifyInput.disabled = false;
+  document.getElementById('verifyBtn').disabled = false;
+  verifyInput.focus();
+}
+
+function dialSVG(score, color) {
+  const r = 48, c = 2 * Math.PI * r;
+  const offset = c - (score / 100) * c;
+  return `
+    <circle cx="60" cy="60" r="${r}" fill="none" stroke="#1B2340" stroke-width="10"/>
+    <circle cx="60" cy="60" r="${r}" fill="none" stroke="${color}" stroke-width="10"
+      stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${offset}"
+      transform="rotate(-90 60 60)"/>
+    <text x="60" y="66" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="26" font-weight="600" fill="#EEF1F6">${Math.round(score)}</text>
+  `;
+}
+
+function submitVerify() {
+  const val = verifyInput.value;
+  const errEl = document.getElementById('verifyError');
+  if (val !== PHRASE) {
+    errEl.textContent = "Text doesn't match the passphrase exactly — please retype it.";
+    verifyInput.value = ''; verifyEvents.length = 0;
+    return;
+  }
+  const feats = extractFeatures(verifyEvents, PHRASE);
+  if (feats.error) {
+    errEl.textContent = `Capture glitch — captured ${feats.captured}/${feats.expected} keystrokes (browser autofill/predictive text may be interfering). Please retype it, ideally with autofill disabled.`;
+    verifyInput.value = ''; verifyEvents.length = 0;
+    return;
+  }
+  errEl.textContent = '';
+  verifyInput.value = ''; verifyEvents.length = 0;
+
+  // align to whatever length is common between this sample and the baseline
+  const nDwell = Math.min(feats.dwell.length, baseline.dwellMean.length);
+  const nFlight = Math.min(feats.flight.length, baseline.flightMean.length);
+
+  const dwellZ = feats.dwell.slice(0, nDwell).map((v, i) => (v - baseline.dwellMean[i]) / baseline.dwellStd[i]);
+  const flightZ = feats.flight.slice(0, nFlight).map((v, i) => (v - baseline.flightMean[i]) / baseline.flightStd[i]);
+  const allZ = dwellZ.concat(flightZ).map(z => Math.min(Math.abs(z), 6));
+  const meanAbsZ = mean(allZ);
+  const trustScore = Math.max(0, Math.min(100, 100 - meanAbsZ * 12));
+
+  const totalDeviationPct = ((feats.total - baseline.totalMean) / baseline.totalMean) * 100;
+  const dwellDeviationPct = ((mean(feats.dwell) - mean(baseline.dwellMean)) / mean(baseline.dwellMean)) * 100;
+
+  let decision, decisionClass, decisionSub, color;
+  if (trustScore >= 75) {
+    decision = "Authenticated"; decisionClass = "Authenticated"; color = "#4FAE7C";
+    decisionSub = "Typing rhythm closely matches enrolled baseline. Session proceeds without friction.";
+  } else if (trustScore >= 45) {
+    decision = "Step-up verification"; decisionClass = "Step-up"; color = "#E0A63C";
+    decisionSub = "Moderate deviation from baseline rhythm. Trigger OTP or biometric step-up before high-value actions.";
+  } else {
+    decision = "Blocked — flagged for review"; decisionClass = "Blocked"; color = "#D9645A";
+    decisionSub = "Typing rhythm substantially differs from the enrolled user. Session blocked, fraud ops notified.";
+  }
+
+  document.getElementById('dialSvg').innerHTML = dialSVG(trustScore, color);
+  const dLabel = document.getElementById('decisionLabel');
+  dLabel.textContent = decision;
+  dLabel.className = 'decision-label decision-' + decisionClass;
+  document.getElementById('decisionSub').textContent = decisionSub;
+
+  const explain = [];
+  explain.push(tagFor(Math.abs(dwellDeviationPct) < 15, `Dwell time ${dwellDeviationPct >= 0 ? '+' : ''}${dwellDeviationPct.toFixed(0)}% vs baseline`));
+  explain.push(tagFor(Math.abs(totalDeviationPct) < 20, `Typing speed ${totalDeviationPct >= 0 ? '+' : ''}${totalDeviationPct.toFixed(0)}% vs baseline duration`));
+  explain.push(tagFor(meanAbsZ < 1.2, `Overall rhythm deviation: ${meanAbsZ.toFixed(2)}\u03c3 from baseline`));
+  document.getElementById('explainList').innerHTML = explain.join('');
+  document.getElementById('resultWrap').classList.add('show');
+
+  addLogEntry(trustScore, decision, decisionClass);
+}
+
+function tagFor(isGood, text) {
+  const cls = isGood ? 'tag-good' : 'tag-warn';
+  const label = isGood ? 'OK' : 'WATCH';
+  return `<div class="explain-item"><span class="tag ${cls}">${label}</span><span>${text}</span></div>`;
+}
+
+let logCount = 0;
+function addLogEntry(score, decision, cls) {
+  logCount++;
+  document.getElementById('emptyLog').style.display = 'none';
+  document.getElementById('logTable').style.display = 'table';
+  const badgeClass = cls === 'Authenticated' ? 'decision-Authenticated' : cls === 'Step-up' ? 'decision-Step-up' : 'decision-Blocked';
+  const time = new Date().toLocaleTimeString();
+  const row = document.createElement('tr');
+  row.innerHTML = `<td>${time}</td><td>${Math.round(score)}/100</td><td><span class="badge ${badgeClass}">${decision}</span></td><td>Attempt #${logCount}</td>`;
+  document.getElementById('logBody').prepend(row);
+}
+
+function resetAll() {
+  enrollSamples = [];
+  baseline = null;
+  document.querySelectorAll('#enrollDots .dot').forEach(d => d.classList.remove('filled'));
+  document.getElementById('baselineStats').classList.remove('show');
+  document.getElementById('enrollBtn').disabled = false;
+  enrollInput.disabled = false;
+  enrollInput.value = '';
+  verifyInput.value = '';
+  verifyInput.disabled = true;
+  document.getElementById('verifyBtn').disabled = true;
+  document.getElementById('resultWrap').classList.remove('show');
+  document.getElementById('step1pill').classList.add('active');
+  document.getElementById('step1pill').classList.remove('done');
+  document.getElementById('step2pill').classList.remove('active');
+  document.getElementById('enrollError').textContent = '';
+  document.getElementById('verifyError').textContent = '';
+  document.getElementById('logBody').innerHTML = '';
+  document.getElementById('logTable').style.display = 'none';
+  document.getElementById('emptyLog').style.display = 'block';
+  logCount = 0;
+}
+</script>
+</body>
+</html>
