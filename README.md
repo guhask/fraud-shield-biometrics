@@ -5,7 +5,7 @@
 
 Authenticates banking sessions by *how* a customer types, not just what they type — catching account takeover before a fraudulent transaction is ever submitted.
 
-🔗 **Live demo:** [fraud-shield-biometrics.netlify.app](https://fraud-shield-biometrics.netlify.app)
+🔗 **Live demo:** [fraudshieldbiometrics.netlify.app](https://fraudshieldbiometrics.netlify.app)
 
 ---
 
@@ -32,7 +32,7 @@ No new hardware, no separate biometric sensor, no customer-visible change unless
 
 ## Try it yourself
 
-1. Open the [live demo](https://fraud-shield-biometrics.netlify.app) (or `fraud_shield_dashboard.html` locally)
+1. Open the [live demo](https://fraudshieldbiometrics.netlify.app) (or `fraud_shield_dashboard.html` locally)
 2. **Enroll:** type the passphrase `SecurePulse2026` three times to build your rhythm baseline
 3. **Verify:** type it again naturally — watch your Trust Score
 4. **Try it as an impostor:** type noticeably faster, slower, or hunt-and-peck, and watch the score and decision change in real time
